@@ -48,12 +48,12 @@ configure_file(
 
 
 # 添加子目录
-add_subdirectory(src/attack)
-add_subdirectory(src/kalman)
-add_subdirectory(src/pointer)
-add_subdirectory(src/solver)
 add_subdirectory(src/uniterm)
 add_subdirectory(src/utils)
+add_subdirectory(src/solver)
+add_subdirectory(src/pointer)
+add_subdirectory(src/attack)
+add_subdirectory(src/kalman)
 add_subdirectory(src/video)
 
 if (CUDA_FOUND)
