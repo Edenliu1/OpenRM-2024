@@ -2,54 +2,54 @@
 
 
 
-**此算法库为北洋机甲2024视觉算法库**
+**This is the vision algorithm library for Beiyang Mecha 2024**
 
 
-**适配开源自瞄框架 [TJURM-2024](https://github.com/HHgzs/TJURM-2024)**
+**Compatible with the open-source auto-aiming framework [TJURM-2024](https://github.com/HHgzs/TJURM-2024)**
 
-**欢迎查看Wiki，获取更多信息 [TJURM自瞄算法Wiki](https://github.com/HHgzs/TJURM-2024/wiki/TJURM%E8%87%AA%E7%9E%84%E7%AE%97%E6%B3%95Wiki)**
-
-
-
-
-
-## 🌟 代码亮点 🌟
-
-
-
-### 🎖️ 全阵容
-
-集结**自瞄，打符，打前哨**于一体，适配**步兵，哨兵，英雄，无人机**全体兵种
-
-**Bilibili: [【RM自瞄】北洋机甲2024赛季自瞄开源！](https://www.bilibili.com/video/BV1jApUe1EPT/)** 
-
-
-### 🚀 动态链接库设计
-
-本自瞄算法库采用动态链接库设计，**快速上手，便捷调用**
-
-- 支持cmake 调用 find_package
-- 全动态链接库设计
-
-🎉🎉🎉 **使用体验类似 OpenCV** 🎉🎉🎉
+**Welcome to check the Wiki for more information [TJURM Auto-Aiming Algorithm Wiki](https://github.com/HHgzs/TJURM-2024/wiki/TJURM%E8%87%AA%E7%9E%84%E7%AE%97%E6%B3%95Wiki)**
 
 
 
 
 
-### 🙌 算法与框架分离
+## 🌟 Code Highlights 🌟
 
-**算法库**
 
-- 算法库采用动态链接库的形式，方便适配更多视觉项目，便于代码复用
+
+### 🎖️ Full Lineup
+
+Integrating **auto-aiming, rune activation, and outpost targeting** in one, compatible with all unit types: **Infantry, Sentry, Hero, and Drone**
+
+**Bilibili: [【RM Auto-Aiming】Beiyang Mecha 2024 Season Auto-Aiming Open Source!](https://www.bilibili.com/video/BV1jApUe1EPT/)** 
+
+
+### 🚀 Dynamic Link Library Design
+
+This auto-aiming algorithm library adopts dynamic link library design for **quick start and convenient invocation**
+
+- Supports cmake find_package invocation
+- Full dynamic link library design
+
+🎉🎉🎉 **User experience similar to OpenCV** 🎉🎉🎉
+
+
+
+
+
+### 🙌 Algorithm and Framework Separation
+
+**Algorithm Library**
+
+- The algorithm library adopts dynamic link library form, making it easy to adapt to more vision projects and facilitate code reuse
 
 - https://github.com/HHgzs/OpenRM-2024
 
 
 
-**自瞄框架**
+**Auto-Aiming Framework**
 
-- 自瞄框架无具体的算法实现，通过调用算法库中实现的算法，搭建流水线架构，实现高效与高拓展性
+- The auto-aiming framework has no specific algorithm implementation. It builds a pipeline architecture by calling algorithms implemented in the algorithm library, achieving high efficiency and scalability
 
 - https://github.com/HHgzs/TJURM-2024
 
@@ -59,24 +59,24 @@
 
 
 
-## 🦺 环境配置 🦺
+## 🦺 Environment Configuration 🦺
 
-下面是环境配置的保姆级教程，如有疑问请在讨论区或交流群留言
+Below is a comprehensive tutorial for environment configuration. If you have any questions, please leave a message in the discussion area or communication group
 
-**注意**：
+**Note**:
 
-- 项目使用 **OpenCV4.5.4**，您使用的版本应尽量与项目保持一致
+- The project uses **OpenCV4.5.4**, your version should be as consistent with the project as possible
 
-- 可按照下面环境配置流程进行多版本并存安装
+- You can install multiple versions coexisting according to the environment configuration process below
 
-**提示**
+**Tips**
 
-- **无Nvidia硬件，OpenRM仍可正常编译，tensorrt模块自动不参与编译**
-- **无大恒相机驱动，仓库仍可正常编译，工业相机模块不参与编译**
+- **Without Nvidia hardware, OpenRM can still compile normally, the tensorrt module will automatically not participate in compilation**
+- **Without Daheng camera driver, the repository can still compile normally, the industrial camera module will not participate in compilation**
 
 
 
-### 基本环境
+### Basic Environment
 
 ---
 
@@ -84,7 +84,7 @@
 
 #### gcc/g++
 
-本项目中使用的 `gcc/g++` 版本为 `8.4.0`，请确保您的  `gcc/g++` 版本能够正常编译本项目
+The `gcc/g++` version used in this project is `8.4.0`, please ensure your `gcc/g++` version can compile this project normally
 
 ---
 
@@ -92,28 +92,28 @@
 
 #### cmake
 
-本项目使用的 `cmake` 版本为 `3.22.1`，若本机 `cmake` 版本低于 `3.12` 需要更新 `cmake` 版本
+The `cmake` version used in this project is `3.22.1`, if your local `cmake` version is lower than `3.12`, you need to update the `cmake` version
 
-查看 `cmake` 版本与 `gcc/g++` 之间的适配关系：
+Check the compatibility relationship between `cmake` version and `gcc/g++`:
 
 [CXX_STANDARD](https://cmake.org/cmake/help/v3.12/prop_tgt/CXX_STANDARD.html)
 
 
-首先下载需要版本的 `cmake`
+First download the required version of `cmake`
 
 [cmake](https://cmake.org/files/)
 
-本项目中下载的是 `cmake-3.22.1.tar.gz`，
+The version downloaded in this project is `cmake-3.22.1.tar.gz`,
 
 
-解压后进入文件夹
+Extract and enter the folder
 
 ```bash
 tar -xzvf  cmake-3.22.1.tar.gz
 cd cmake-3.22.1
 ```
 
-如果没有bin目录就编译安装
+If there is no bin directory, compile and install
 
 ```bash
 ./bootstrap
@@ -121,29 +121,29 @@ make -j6
 sudo make install
 ```
 
-如果有bin目录就可以直接重命名文件夹后拷贝到软件目录即可
+If there is a bin directory, you can directly rename the folder and copy it to the software directory
 
 ```bash
-# 返回上级目录
+# Return to parent directory
 cd ..
 mv cmake-3.22.1 cmake
 sudo cp -r ./cmake /usr/local
 ```
 
-修改环境变量
+Modify environment variables
 
 ```bash
 vim ~/.bashrc
 ```
 
-在文件最后添加 `export PATH=/usr/local/cmake/bin:$PATH`
+Add `export PATH=/usr/local/cmake/bin:$PATH` at the end of the file
 
 ```bash
 source ~/.bashrc
 cmake --version
 ```
 
-此时应该能够正确打印版本信息，如果后续还是无法使用cmake，则需要加一步软链接
+At this point, it should correctly print version information. If cmake still cannot be used later, you need to add a symbolic link
 
 ```bash
 sudo ln -s /usr/local/cmake/bin/cmake /usr/local/bin/camke
@@ -155,18 +155,18 @@ sudo ln -s /usr/local/cmake/bin/cmake /usr/local/bin/camke
 
 #### Eigen
 
-可以使用apt安装
+You can install using apt
 
 ```bash
 sudo apt install libeigen3-dev
 ```
 
-也可以选择源码编译
+You can also choose to compile from source
 [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 [eigen-git-mirror](https://github.com/eigenteam/eigen-git-mirror)
 
 
-编译安装
+Compile and install
 
 ```bash
 cd eigen-git-mirror
@@ -184,19 +184,19 @@ sudo make install
 
 #### Ceres
 
-首先安装必要依赖
+First install necessary dependencies
 
 ```bash
 sudo apt-get install liblapack-dev libsuitesparse-dev libcxsparse3 libgflags-dev libgoogle-glog-dev libgtest-dev
 ```
 
-从Github上获取ceres源码
+Get ceres source code from Github
 [ceres-solver](https://github.com/ceres-solver/ceres-solver)
 
-这里使用的是`1.14.0`版本，下载tar.gz压缩包
+Version `1.14.0` is used here, download the tar.gz compressed package
 
 
-解压缩并编译
+Decompress and compile
 
 ```bash
 tar -zxvf ceres-solver-1.14.0.tar.gz 
@@ -217,23 +217,23 @@ sudo make install
 
 #### Ncurses
 
-一条指令安装
+Install with one command
 
 ```bash
 sudo apt-get install libncurses5-dev libncursesw5-dev
 ```
 
-注意由于ncueses中的宏定义 `OK`与 `OpenCV` 中冲突，所以需要对其进行修改
+Note that due to conflicts between the `OK` macro definition in ncurses and OpenCV, it needs to be modified
 
-首先修改权限
+First modify the permissions
 
 ```bash
 sudo chmod 770 /usr/include/curses.h
 ```
 
-使用VSCode全局替换，将 `OK` 修改为 `KO`
+Use VSCode global replace to change `OK` to `KO`
 
-最后将权限改回来
+Finally change the permissions back
 
 ```bash
 sudo chmod 644 /usr/include/curses.h
@@ -245,11 +245,11 @@ sudo chmod 644 /usr/include/curses.h
 
 
 
-#### Cuda、cudnn、TensorRT
+#### Cuda, cudnn, TensorRT
 
-由于不同设备属性不一致，请自行安装，本项目所使用**Nvidia NX**及**AGX**系列系统环境自带**CUDA**套装
+Due to different device properties, please install by yourself. The **Nvidia NX** and **AGX** series system environments used in this project come with **CUDA** suite
 
-**无Nvidia硬件，无CUDA，OpenRM仍可正常编译，tensorrt模块不参与编译**
+**Without Nvidia hardware, without CUDA, OpenRM can still compile normally, tensorrt module will not participate in compilation**
 
 ---
 
@@ -257,9 +257,9 @@ sudo chmod 644 /usr/include/curses.h
 
 
 
-#### OpenCV 4.5.4 多版本并存
+#### OpenCV 4.5.4 Multiple Version Coexistence
 
-首先安装必要依赖
+First install necessary dependencies
 
 ```bash
 sudo apt-get update
@@ -268,19 +268,19 @@ sudo apt-get install libgtk2.0-dev libavcodec-dev libavformat-dev  libtiff4-dev 
 sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
 ```
 
-**依赖如若不完整，请自行上网搜索**
+**If dependencies are incomplete, please search online by yourself**
 
 
 
-分别前往 `OpenCV` 和 `opencv_contrib` 的 github 仓库下载源码
+Go to the github repositories of `OpenCV` and `opencv_contrib` respectively to download the source code
 
-注意 OpenCV 和 opencv_contrib 的版本要对应正确
+Note that the versions of OpenCV and opencv_contrib must correspond correctly
 
 - [opencv](https://github.com/opencv/opencv/releases)
 - [opencv_contrib](https://github.com/opencv/opencv_contrib/tags)
 
 
-将 `opencv-4.5.4.zip` 和 `opencv_contrib-4.5.4.zip` 放在同一文件夹，分别解压缩
+Place `opencv-4.5.4.zip` and `opencv_contrib-4.5.4.zip` in the same folder and decompress them separately
 
 ```bash
 unzip opencv-4.5.4.zip
@@ -290,13 +290,13 @@ mkdir build
 cd build
 ```
 
-在/usr/local/下新建一个文件夹，用于存放opencv的版本
+Create a new folder under /usr/local/ to store the opencv version
 
 ```bash
 mkdir /usr/local/opencv4.5.4
 ```
 
-如果选择安装opencv的cuda功能和opencv拓展包，可以使用下面的命令
+If you choose to install opencv's cuda functionality and opencv extension package, you can use the following command
 
 ```bash
 cmake \
@@ -319,11 +319,11 @@ cmake \
 
 
 
-**CUDA_ARCH**版本应与自己的**CUDA**一致，这里仅介绍带 CUDA 的 OpenCV 安装方法，不带 CUDA 的安装同理
+The **CUDA_ARCH** version should be consistent with your own **CUDA**. Here we only introduce the installation method of OpenCV with CUDA. The installation without CUDA is similar
 
 
 
-接着执行编译安装
+Then execute compile and install
 
 ```bash
 make -j6
@@ -336,17 +336,17 @@ sudo make install
 
 
 
-#### 大恒驱动
+#### Daheng Driver
 
-前往大恒官网下载c++驱动
+Go to Daheng official website to download c++ driver
 
 https://www.daheng-imaging.com/downloads/
 
-本项目中使用的是 【大恒相机】【USB3.0】【ARM Linux】
+The one used in this project is 【Daheng Camera】【USB3.0】【ARM Linux】
 
 **Galaxy Linux-armhf-Gige-U3 SDK**
 
-如不安装相机驱动，仓库仍可正常编译
+If the camera driver is not installed, the repository can still compile normally
 
 ---
 
@@ -356,9 +356,9 @@ https://www.daheng-imaging.com/downloads/
 
 
 
-### OpenRM 安装
+### OpenRM Installation
 
-使用 `run.sh` 自动安装
+Use `run.sh` for automatic installation
 
 ```bash
 cd OpenRM-2024
@@ -367,26 +367,26 @@ sudo ./run.sh -t
 
 
 
-`run.sh` 有多种功能：
+`run.sh` has multiple functions:
 
-- **-t** 编译安装**OpenRM**动态链接库后，编译安装名为 **openrm** 的参数面板程序
-- **-r** 删除编译和安装结果，并重新编译
-- **-d** 彻底删除 OpenRM
-- **-i** 重新安装
-- **-g \<arg>** 调用git，需添加commit
-- 不添加参数，只编译安装 **OpenRM** 动态链接库
-
-
+- **-t** After compiling and installing **OpenRM** dynamic link library, compile and install a parameter panel program named **openrm**
+- **-r** Delete compilation and installation results, and recompile
+- **-d** Completely delete OpenRM
+- **-i** Reinstall
+- **-g \<arg>** Call git, need to add commit
+- Without parameters, only compile and install **OpenRM** dynamic link library
 
 
 
-## 🧩 模块介绍 🧩
+
+
+## 🧩 Module Introduction 🧩
 
 
 
 ### cudatools
 
-cuda编程部分，调用**NVCC**编译，目前实现了图像resize功能
+CUDA programming section, compiled with **NVCC**, currently implements image resize functionality
 
 ```c++
 void rm::resize(
@@ -408,7 +408,7 @@ void rm::resize(
 
 ### tensorrt
 
-调用tensorrt加速推理，以及yolo系的nms算法
+Call tensorrt to accelerate inference, and yolo-series nms algorithms
 
 ```c++
 bool rm::initTrtOnnx(
@@ -575,7 +575,7 @@ std::vector<YoloRect> rm::yoloArmorNMS_FPX(
 
 ### attach
 
-攻击目标选择及切换模块
+Attack target selection and switching module
 
 ```c++
 class AttackInterface;
@@ -603,7 +603,7 @@ double rm::getAngleOffsetTargetToReferee(
 
 ### kalman
 
-基于KF和EKF的运动预测模型
+Motion prediction models based on KF and EKF
 
 ```c++
 class rm::AntitopV1;
@@ -637,7 +637,7 @@ class rm::trajectoryV1;
 
 ### uniterm
 
-用于openrm参数面板程序的库，可被调用添加LOG
+Library for openrm parameter panel program, can be called to add LOG
 
 ```c++
 void rm::message(const std::string& name, int msg);
@@ -655,49 +655,49 @@ void rm::message(const std::string& info, int img_width, int img_height, cv::Poi
 
 ### pointer
 
-用于传统视觉查找灯条和四点定位的模块
+Module for traditional vision to find light bars and four-point positioning
 
 
 
 ### solver
 
-实现了上海交通大学交龙战队提出的基于三分法的pnp解算
+Implements PnP solving based on ternary method proposed by Shanghai Jiao Tong University Jiao Long team
 
 
 
 ### video
 
-摄像头驱动接口，支持UVC相机和大恒相机
+Camera driver interface, supports UVC camera and Daheng camera
 
 
 
 ### serial
 
-串口通讯，支持usb转ttl，以及虚拟串口
+Serial communication, supports usb to ttl and virtual serial port
 
 
 
 ### tf
 
-坐标转换，对自瞄中使用的坐标转换进行了具体实现
+Coordinate transformation, implements specific coordinate transformation used in auto-aiming
 
 
 
 ### delay
 
-飞行延迟计算
+Flight delay calculation
 
 
 
 ### print
 
-调参打印工具
+Parameter tuning printing tool
 
 
 
 ### timer
 
-时间模块
+Time module
 
 
 
@@ -707,12 +707,12 @@ void rm::message(const std::string& info, int img_width, int img_height, cv::Poi
 
 
 
-## 💡 扩展方法 💡
+## 💡 Extension Method 💡
 
 
 
 
-一共需要修改五处，下面以添加`openrm_timer`为例，其源码为`src/utils/timer.cpp`
+A total of five places need to be modified. Below is an example of adding `openrm_timer`, whose source code is `src/utils/timer.cpp`
 
 `include/openrm.h`
 
