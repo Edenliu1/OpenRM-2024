@@ -10,6 +10,7 @@
  * - Lightbar detection using contour analysis
  * - Armor matching from lightbar pairs
  * - Performance monitoring (FPS, processing time)
+ * - Competition-optimized parameters from TJURM team
  * 
  * Usage:
  *   ./armor_detector_demo           # Use default camera, detect BLUE armor
@@ -21,6 +22,19 @@
  *   'r': Switch to RED armor detection
  *   'b': Switch to BLUE armor detection
  *   'd': Toggle debug view (show preprocessing steps)
+ *   '+/-': Adjust binary threshold
+ *   'w/s': Adjust min lightbar area
+ * 
+ * Parameter Tuning Guide:
+ *   1. Start with binary_threshold (0.6-0.7 for bright LEDs)
+ *   2. Adjust min_lightbar_area to filter noise
+ *   3. Fine-tune angle_diff for parallel detection
+ *   4. Adjust armor_ratio for different armor types:
+ *      - Standard infantry: 1.8-3.5
+ *      - Balance: 3.5-4.0
+ *      - Hero (large armor): 3.0-4.5
+ * 
+ * See: https://github.com/HHgzs/TJURM-2024/wiki
  */
 
 #include <opencv2/opencv.hpp>
@@ -40,31 +54,73 @@ using namespace cv;
 
 // =============================================================================
 // Configuration Parameters
+// Two modes: DEV (webcam testing) and COMPETITION (real armor with LEDs)
+// See: https://github.com/HHgzs/TJURM-2024/wiki/TJURM%E8%87%AA%E7%9E%84%E7%AE%97%E6%B3%95Wiki
 // =============================================================================
+
+// Set mode here: true for webcam testing, false for competition
+#define DEV_MODE true
+
 struct DetectionConfig {
     // Color detection
     rm::ArmorColor target_color = rm::ARMOR_COLOR_BLUE;
+    rm::GrayScaleMethod gray_method;
     
     // Preprocessing
-    double binary_threshold = 0.5;      // Higher = more strict (0-1)
-    int morph_size = 3;                 // Morphological kernel size
+    double binary_threshold;
+    int morph_size = 3;
     
     // Lightbar detection parameters
-    double min_lightbar_area = 50.0;    // Increased to filter noise
-    double max_lightbar_area = 3000.0;  // Reduced max
-    double min_lightbar_ratio = 2.0;    // Stricter ratio (taller)
-    double max_lightbar_ratio = 10.0;   // Reduced max
-    double max_lightbar_angle = 45.0;   // Max tilt angle
+    double min_lightbar_area;
+    double max_lightbar_area;
+    double min_lightbar_ratio;
+    double max_lightbar_ratio;
+    double max_lightbar_angle;
     
     // Armor matching parameters
-    double max_angle_diff = 8.0;        // Stricter angle matching
-    double max_length_ratio = 1.5;      // Lightbars should be similar length
-    double min_armor_ratio = 1.5;       // Armor is wider than tall
-    double max_armor_ratio = 4.5;       // Not too wide
-    double max_center_offset = 0.5;     // Centers should be aligned
+    double max_angle_diff;
+    double max_length_ratio;
+    double min_armor_ratio;
+    double max_armor_ratio;
+    double max_center_offset;
     
     // Display
     bool show_debug = false;
+    
+    // Constructor: Initialize based on mode
+    DetectionConfig() {
+#if DEV_MODE
+        // ===== DEVELOPMENT MODE =====
+        // For testing with MacBook webcam and regular colored objects (no bright LEDs)
+        gray_method = rm::GRAY_SCALE_METHOD_SUB;  // Channel subtraction for better contrast
+        binary_threshold = 0.35;      // Much lower for regular objects (not bright LEDs)
+        min_lightbar_area = 30.0;     // Lower to catch smaller features
+        max_lightbar_area = 5000.0;   // Higher for webcam
+        min_lightbar_ratio = 1.8;     // More relaxed
+        max_lightbar_ratio = 15.0;    // Allow more variation
+        max_lightbar_angle = 45.0;    // More relaxed
+        max_angle_diff = 12.0;        // More tolerant
+        max_length_ratio = 2.5;       // More variation allowed
+        min_armor_ratio = 1.2;        // Catch more shapes
+        max_armor_ratio = 5.0;        // Wider range
+        max_center_offset = 0.6;      // More relaxed alignment
+#else
+        // ===== COMPETITION MODE =====
+        // For real RoboMaster armor with bright LED lightbars
+        gray_method = rm::GRAY_SCALE_METHOD_RGB;  // Single channel for bright LEDs
+        binary_threshold = 0.65;      // High threshold for bright LEDs
+        min_lightbar_area = 100.0;    // Filter noise
+        max_lightbar_area = 2500.0;   // Tight bounds
+        min_lightbar_ratio = 2.5;     // Tall rectangles
+        max_lightbar_ratio = 12.0;    // Competition standard
+        max_lightbar_angle = 35.0;    // Strict
+        max_angle_diff = 7.0;         // Very strict parallel
+        max_length_ratio = 1.8;       // Similar lengths
+        min_armor_ratio = 1.8;        // Standard infantry
+        max_armor_ratio = 4.0;        // Balance/Hero
+        max_center_offset = 0.4;      // Strict alignment
+#endif
+    }
 };
 
 // =============================================================================
@@ -178,8 +234,9 @@ int detectArmors(const Mat& src, Mat& dst, DetectionConfig& config,
     dst = src.clone();
     
     // Step 1: Convert to grayscale based on target color
+    // Use method from config (SUB for dev mode, RGB for competition)
     Mat gray;
-    rm::getGrayScale(src, gray, config.target_color, rm::GRAY_SCALE_METHOD_RGB);
+    rm::getGrayScale(src, gray, config.target_color, config.gray_method);
     
     // Step 2: Convert to binary image
     Mat binary;
@@ -196,14 +253,15 @@ int detectArmors(const Mat& src, Mat& dst, DetectionConfig& config,
     findContours(binary, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     
     // Step 4: Filter contours to find valid lightbars
+    // Using TJURM competition-tested parameters
     vector<rm::Lightbar> lightbars;
     rm::getLightbarsFromContours(
         contours, lightbars,
-        5.0,      // min_rect_side
-        5000.0,   // max_rect_side  
-        10.0,     // min_value_area
-        0.5,      // min_ratio_area
-        90.0      // max_angle
+        8.0,      // min_rect_side: minimum edge length (was 5.0)
+        800.0,    // max_rect_side: maximum edge length (was 5000.0)
+        50.0,     // min_value_area: minimum contour area (was 10.0)
+        0.6,      // min_ratio_area: contour fill ratio (was 0.5)
+        60.0      // max_angle: initial angle filter (was 90.0)
     );
     
     // Set angles for each lightbar (OpenCV 4.5+)
@@ -248,13 +306,13 @@ int detectArmors(const Mat& src, Mat& dst, DetectionConfig& config,
             double avg_length = rm::getValueLengthLightbarPair(lb1, lb2);
             double distance_ratio = distance / avg_length;
             
-            // Strict armor validation
+            // Strict armor validation (TJURM competition standard)
             bool valid_angles = angle_diff <= config.max_angle_diff;
             bool similar_lengths = length_ratio <= config.max_length_ratio;
             bool valid_ratio = (armor_ratio >= config.min_armor_ratio && 
                                armor_ratio <= config.max_armor_ratio);
             bool aligned_centers = (center_offset / avg_length) <= config.max_center_offset;
-            bool reasonable_distance = (distance_ratio >= 1.5 && distance_ratio <= 5.0);
+            bool reasonable_distance = (distance_ratio >= 2.0 && distance_ratio <= 4.5);  // Tighter range
             
             if (valid_angles && similar_lengths && valid_ratio && 
                 aligned_centers && reasonable_distance) {
@@ -327,6 +385,17 @@ int main(int argc, char** argv) {
     cout << "  AzureBot Armor Detector Demo" << endl;
     cout << "  OpenRM-2024 Library" << endl;
     cout << "========================================" << endl;
+#if DEV_MODE
+    cout << "Mode: DEVELOPMENT (Webcam Testing)" << endl;
+    cout << "  - Relaxed parameters for regular objects" << endl;
+    cout << "  - No bright LEDs required" << endl;
+    cout << "  - Binary threshold: " << config.binary_threshold << endl;
+#else
+    cout << "Mode: COMPETITION (Real Armor LEDs)" << endl;
+    cout << "  - Strict competition parameters" << endl;
+    cout << "  - Requires bright LED lightbars" << endl;
+    cout << "  - Binary threshold: " << config.binary_threshold << endl;
+#endif
     cout << "Camera ID: " << camera_id << endl;
     cout << "Target Color: " 
          << (config.target_color == rm::ARMOR_COLOR_BLUE ? "BLUE" : "RED") 
