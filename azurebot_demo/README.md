@@ -4,13 +4,35 @@ Complete armor detection demonstration using the OpenRM-2024 library.
 
 ## 🎯 Features
 
+- **Two Modes**: DEV (webcam testing) and COMPETITION (real armor LEDs)
 - **Cross-Platform**: Works on both macOS (development) and Linux (Jetson deployment)
 - **Real-Time Detection**: Uses OpenCV VideoCapture for camera input
 - **Complete Pipeline**: Color preprocessing → Lightbar detection → Armor matching
 - **Interactive Controls**: Switch colors, toggle debug view in real-time
 - **Performance Monitoring**: FPS and detection time display
 
+### 🔧 Development vs Competition Mode
+
+| Aspect | Dev Mode 🔧 | Competition Mode 🏆 |
+|--------|-------------|---------------------|
+| **Use Case** | Webcam + regular objects | Real armor + bright LEDs |
+| **Threshold** | 0.35 (low) | 0.65 (high) |
+| **Parameters** | Relaxed | Strict (TJURM standard) |
+| **Perfect For** | Learning, testing | Jetson deployment |
+
+**Current Mode**: Development (good for MacBook webcam testing)  
+**See**: [WEBCAM_TESTING.md](WEBCAM_TESTING.md) for webcam testing guide
+
 ## 📋 Prerequisites
+
+### Quick Environment Check
+
+```bash
+cd azurebot_demo
+./check_env.sh    # Checks if all dependencies are ready
+```
+
+### Full Setup
 
 Make sure OpenRM-2024 is already built and installed:
 
@@ -20,6 +42,12 @@ sudo ./run.sh
 ```
 
 This will install the OpenRM libraries to `/usr/local/lib/` and headers to `/usr/local/include/openrm/`.
+
+**⚠️ Important**: If you use Anaconda/Miniconda, **deactivate it** before building:
+```bash
+conda deactivate
+```
+See [CROSS_PLATFORM_GUIDE.md](CROSS_PLATFORM_GUIDE.md) for details.
 
 ## 🔨 Building the Demo
 
@@ -65,11 +93,20 @@ Run the complete armor detection:
 ./build/armor_detector_demo 1 red    # Camera 1, red armor
 ```
 
+**🎯 For MacBook Webcam Testing**:
+The demo is in **DEV_MODE** by default. Test with:
+- 2 blue/red markers held vertically (||)
+- Colored paper strips
+- Blue/red rectangles on phone screen
+- See [WEBCAM_TESTING.md](WEBCAM_TESTING.md) for detailed guide
+
 **Interactive Controls**:
 - `Q` or `ESC`: Quit program
 - `R`: Switch to RED armor detection
 - `B`: Switch to BLUE armor detection  
 - `D`: Toggle debug view (shows preprocessing steps)
+- `+/-`: Adjust binary threshold (critical for webcam!)
+- `W/S`: Adjust minimum lightbar area
 
 ## 📊 Understanding the Output
 
@@ -108,24 +145,38 @@ Output with Bounding Boxes
 
 ## 🔧 Tuning Parameters
 
-Edit `armor_detector_demo.cpp` to adjust detection sensitivity:
+The demo now uses **competition-optimized parameters** from [TJURM team](https://github.com/HHgzs/TJURM-2024/wiki):
 
 ```cpp
 struct DetectionConfig {
-    // Lightbar detection
-    double min_lightbar_area = 20.0;    // Minimum lightbar size
-    double max_lightbar_area = 5000.0;  // Maximum lightbar size
-    double min_lightbar_ratio = 1.5;    // Min height/width ratio
-    double max_lightbar_ratio = 15.0;   // Max height/width ratio
+    // Preprocessing
+    double binary_threshold = 0.65;     // Competition standard: 0.6-0.7
     
-    // Armor matching
-    double max_angle_diff = 15.0;       // Max angle difference (degrees)
-    double min_armor_ratio = 1.2;       // Min armor width/height
-    double max_armor_ratio = 5.0;       // Max armor width/height
+    // Lightbar detection (competition-tested)
+    double min_lightbar_area = 100.0;   // Filter noise
+    double max_lightbar_area = 2500.0;  // Reasonable max
+    double min_lightbar_ratio = 2.5;    // Tall rectangles
+    double max_lightbar_ratio = 12.0;   // Allow angled views
+    double max_lightbar_angle = 35.0;   // Stricter angle
+    
+    // Armor matching (TJURM standard)
+    double max_angle_diff = 7.0;        // Strict parallel
+    double max_length_ratio = 1.8;      // Similar lengths
+    double min_armor_ratio = 1.8;       // Standard infantry
+    double max_armor_ratio = 4.0;       // Balance/Hero
 };
 ```
 
-After editing, rebuild:
+**📖 See [PARAMETER_TUNING.md](PARAMETER_TUNING.md) for detailed explanation**
+
+### Quick Tuning
+
+Runtime adjustments (no rebuild needed):
+- Press `+/-` to adjust binary threshold
+- Press `W/S` to adjust minimum lightbar area
+- Press `D` to see preprocessing steps
+
+After editing code, rebuild:
 ```bash
 ./build.sh
 ```
@@ -145,11 +196,45 @@ ERROR: Cannot open camera 0
 - Slow hardware
 
 ### No Armors Detected
-**Solutions**:
+
+**If using webcam (MacBook camera)**:
+1. ✅ Demo is in DEV_MODE (you'll see this in startup message)
+2. Press `-` several times to **lower threshold** (try 0.25-0.35)
+3. Press `D` to see debug view
+4. Test with **2 blue markers** held vertically (||)
+5. Make sure markers are parallel and 3-5 cm apart
+6. See [WEBCAM_TESTING.md](WEBCAM_TESTING.md) for complete guide
+
+**If using real armor with LEDs**:
+- Switch to COMPETITION mode (edit line 62 in armor_detector_demo.cpp)
 - Press `R` or `B` to switch detection color
 - Adjust lighting conditions
-- Point camera at red/blue objects
 - Tune detection parameters (see above)
+
+### gflags Duplicate Symbol Error
+
+**Error message**:
+```
+ERROR: flag 'flagfile' was defined more than once
+```
+
+**Cause**: This happens when both conda and system libraries (Homebrew/apt) provide gflags, causing a symbol conflict.
+
+**Solution**:
+```bash
+# Deactivate conda environment
+conda deactivate
+
+# Clean rebuild the demo
+cd azurebot_demo
+./build.sh clean
+
+# Run the demo (still with conda deactivated)
+cd build
+./armor_detector_demo
+```
+
+**For students using conda**: Always build and run OpenRM projects **outside** of conda environments to avoid library conflicts. The build script will now warn you if conda is active.
 
 ### Build Errors
 
