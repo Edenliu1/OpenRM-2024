@@ -71,8 +71,18 @@ Below is a comprehensive tutorial for environment configuration. If you have any
 
 **Tips**
 
+- **✅ AMD GPU / Non-NVIDIA Systems**: OpenRM now fully supports systems without NVIDIA hardware (AMD GPUs, Intel GPUs, macOS). TensorRT module automatically disabled. See [AMD_GPU_FIX.md](AMD_GPU_FIX.md) for details.
 - **Without Nvidia hardware, OpenRM can still compile normally, the tensorrt module will automatically not participate in compilation**
 - **Without Daheng camera driver, the repository can still compile normally, the industrial camera module will not participate in compilation**
+
+### System Compatibility
+
+| Platform | GPU | Status | Notes |
+|----------|-----|--------|-------|
+| Linux | NVIDIA | ✅ Full support | All features including TensorRT |
+| Linux | AMD | ✅ Supported | All features except TensorRT |
+| Linux | Intel | ✅ Supported | All features except TensorRT |
+| macOS | Any | ✅ Supported | Development only, no TensorRT |
 
 
 
